@@ -13,10 +13,7 @@ class RiskType(Base):
     name = Column(String, nullable=False)
     description = Column(String)
     attributes = relationship("RiskTypeAttribute", back_populates="risk_type")
-
-    def __repr__(self):
-        return "<RiskType(name='%s', description='%s')>" % (
-                            self.name, self.description)
+    instances = relationship("RiskTypeInstance", back_populates="risk_type")
 
 class RiskTypeAttributeDataType(enum.Enum):
     INT = 1
@@ -32,7 +29,22 @@ class RiskTypeAttribute(Base):
     data_type = Column(Enum(RiskTypeAttributeDataType), nullable=False)
     risk_type_id = Column(Integer, ForeignKey('risk_type.id'), nullable=False)
     risk_type = relationship("RiskType", back_populates="attributes")
+    instances = relationship("RiskTypeAttributeInstance", back_populates="attribute_type")
 
-    def __repr__(self):
-        return "<RiskTypeAttribute(name='%s', data_type='%s')>" % (
-                            self.name, self.data_type)
+class RiskTypeInstance(Base):
+    __tablename__ = 'risk_type_instance'
+
+    id = Column(Integer, primary_key=True)
+    risk_type_id = Column(Integer, ForeignKey('risk_type.id'), nullable=False)
+    risk_type = relationship("RiskType", back_populates="instances")
+    attributes_instances = relationship("RiskTypeAttributeInstance", back_populates="risk_type_instance")
+
+class RiskTypeAttributeInstance(Base):
+    __tablename__ = 'risk_type_attribute_instance'
+
+    id = Column(Integer, primary_key=True)
+    attribute_type_id = Column(Integer, ForeignKey('risk_type_attribute.id'), nullable=False)
+    attribute_type = relationship("RiskTypeAttribute", back_populates="instances")
+    risk_type_instance_id = Column(Integer, ForeignKey('risk_type_instance.id'), nullable=False)
+    risk_type_instance = relationship("RiskTypeInstance", back_populates="attributes_instances")
+    value = Column(Integer)
