@@ -1,13 +1,17 @@
 import unittest
 import datetime
+from decimal import Decimal
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from brite.model import Base, RiskType, AttributeType, AttributeDataType,\
+from brite.model import Base
+from brite.model import RiskType, RiskTypeInstance
+from brite.model import AttributeType, AttributeDataType,\
     AttributeTypeInt, AttributeTypeText, AttributeTypeDate, AttributeTypeEnum,\
-    AttributeTypeEnumValue, RiskTypeInstance, AttributeInstanceInt, AttributeInstanceText,\
-    AttributeInstanceDate, AttributeInstanceEnum
+    AttributeTypeEnumValue, AttributeTypeNumeric
+from brite.model import AttributeInstanceInt, AttributeInstanceText,\
+    AttributeInstanceDate, AttributeInstanceEnum, AttributeInstanceNumeric
 
 class TestRawRiskTypeModel(unittest.TestCase):
     def setUp(self):
@@ -42,6 +46,18 @@ class TestRawRiskTypeModel(unittest.TestCase):
         risk_type = RiskType(name='Golf prize')
         session.add(risk_type)
         prize_value = AttributeTypeInt(name='Value', risk_type=risk_type)
+        session.add(prize_value)
+        session.commit()
+        found_risk_type = session.query(RiskType).filter_by(name='Golf prize').first()
+        found_risk_type_attribute = session.query(AttributeType).filter_by(name='Value').first()
+        assert found_risk_type_attribute.risk_type == risk_type
+        assert found_risk_type.attributes == [prize_value]
+
+    def test_add_new_risk_type_attribute_Numeric(self):
+        session = self.Session()
+        risk_type = RiskType(name='Golf prize')
+        session.add(risk_type)
+        prize_value = AttributeTypeNumeric(name='Value', risk_type=risk_type)
         session.add(prize_value)
         session.commit()
         found_risk_type = session.query(RiskType).filter_by(name='Golf prize').first()
@@ -96,7 +112,7 @@ class TestRawRiskTypeModel(unittest.TestCase):
         assert risk_type_instance == found_risk_type_instance
         assert found_risk_type_instance.id is not None
 
-    def test_add_new_risk_type_attribute_instance_IntAttribute(self):
+    def test_add_new_risk_type_attribute_instance_using_data_type(self):
         session = self.Session()
         risk_type = RiskType(name='Golf prize')
         session.add(risk_type)
@@ -108,6 +124,47 @@ class TestRawRiskTypeModel(unittest.TestCase):
 
         risk_type_attribute_instance = AttributeInstanceInt(risk_type_instance=risk_type_instance,
                                             attribute_type=attr_type, int_value=10)
+        session.add(risk_type_attribute_instance)
+
+        session.commit()
+
+        found_risk_type_instance = session.query(RiskTypeInstance).filter_by(risk_type=risk_type).first()
+
+        assert found_risk_type_instance.attributes_instances == [risk_type_attribute_instance]
+
+
+    def test_add_new_risk_type_attribute_instance_IntAttribute(self):
+        session = self.Session()
+        risk_type = RiskType(name='Golf prize')
+        session.add(risk_type)
+        attr_type = AttributeTypeInt(name='Value', risk_type=risk_type)
+        session.add(attr_type)
+
+        risk_type_instance = RiskTypeInstance(risk_type=risk_type)
+        session.add(risk_type_instance)
+
+        risk_type_attribute_instance = AttributeInstanceInt(risk_type_instance=risk_type_instance,
+                                            attribute_type=attr_type, int_value=10)
+        session.add(risk_type_attribute_instance)
+
+        session.commit()
+
+        found_risk_type_instance = session.query(RiskTypeInstance).filter_by(risk_type=risk_type).first()
+
+        assert found_risk_type_instance.attributes_instances == [risk_type_attribute_instance]
+
+    def test_add_new_risk_type_attribute_instance_NumericAttribute(self):
+        session = self.Session()
+        risk_type = RiskType(name='Golf prize')
+        session.add(risk_type)
+        attr_type = AttributeTypeNumeric(name='Value', risk_type=risk_type)
+        session.add(attr_type)
+
+        risk_type_instance = RiskTypeInstance(risk_type=risk_type)
+        session.add(risk_type_instance)
+
+        risk_type_attribute_instance = AttributeInstanceNumeric(risk_type_instance=risk_type_instance,
+                                            attribute_type=attr_type, numeric_value=Decimal('10.50'))
         session.add(risk_type_attribute_instance)
 
         session.commit()

@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum
+from sqlalchemy import Column, Integer, Numeric, String, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -20,6 +20,7 @@ class AttributeDataType(enum.Enum):
     TEXT = 2
     DATE = 3
     ENUM = 4
+    NUMERIC = 5
 
 class AttributeType(Base):
     __tablename__ = 'risk_type_attribute'
@@ -39,6 +40,11 @@ class AttributeType(Base):
 class AttributeTypeInt(AttributeType):
     __mapper_args__ = {
         'polymorphic_identity': AttributeDataType.INT
+    }
+
+class AttributeTypeNumeric(AttributeType):
+    __mapper_args__ = {
+        'polymorphic_identity': AttributeDataType.NUMERIC
     }
 
 class AttributeTypeText(AttributeType):
@@ -93,6 +99,13 @@ class AttributeInstanceInt(AttributeInstance):
 
     __mapper_args__ = {
         'polymorphic_identity': AttributeDataType.INT
+    }
+
+class AttributeInstanceNumeric(AttributeInstance):
+    numeric_value = Column(Numeric)
+
+    __mapper_args__ = {
+        'polymorphic_identity': AttributeDataType.NUMERIC
     }
 
 class AttributeInstanceText(AttributeInstance):
