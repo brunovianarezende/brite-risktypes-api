@@ -10,7 +10,10 @@ setup(
     author='Bruno Rezende',
     author_email='brunovianarezende@gmail.com',
     entry_points={
-        'console_scripts': ['addnewtype=brite.model.command_line.add_new_type:add_new_type_main'],
+        'console_scripts': [
+            'addnewtype=brite.model.command_line.add_new_type:add_new_type_main',
+            'searchtypes=brite.model.command_line.search_types:search_types_main',
+        ],
     },
       install_requires=required,
 )
