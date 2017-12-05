@@ -1,0 +1,36 @@
+{
+  "name": "Stolen car",
+  "description": "Insurance for when a car is stolen",
+  "attributes": [
+    {
+      "description": "When the insurance begins to take effect",
+      "name": "Start date",
+      "type": "date"
+    },
+    {
+      "description": "When the insurance finishes",
+      "name": "End date",
+      "type": "date"
+    },
+    {
+      "description": "How much to pay in the case of the car is stolen",
+      "name": "Value",
+      "type": "numeric"
+    },
+    {
+      "description": "The maximal number of days the client has to communicate the theft",
+      "name": "Communication days",
+      "type": "int"
+    },
+    {
+      "description": "Has the client being stolen before?",
+      "name": "Customer history",
+      "allowed_values": [
+        "Never stolen",
+        "Stolen once",
+        "Stolen multiple times"
+      ],
+      "type": "enum"
+    }
+  ]
+}
