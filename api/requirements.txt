@@ -1,1 +1,2 @@
 file:../data#egg=BriteRisktypesData
+Flask==0.12.2
