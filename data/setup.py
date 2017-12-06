@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 setup(
     name='brite-risktypes-model',
     version='0.1.0',
-    packages=find_packages(exclude=['tests']),
+    packages=['brite.model'],
     author='Bruno Rezende',
     author_email='brunovianarezende@gmail.com',
     entry_points={
