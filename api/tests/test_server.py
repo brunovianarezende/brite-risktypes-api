@@ -84,7 +84,16 @@ class TestServer(unittest.TestCase):
         })
 
     def test_get_type(self):
-        pass
+        risk_type = deepcopy(_full_insurance)
+        new_id = self._service.add_type(risk_type)
+        expected = self._service.get_type(new_id)
+
+        response = self.app.get('/types/%s/' % new_id)
+        self.assertEqual(response.status_code, 200)
+        data = from_json(response)
+        self.assertEqual(data, expected)
 
     def test_get_type_not_available(self):
-        pass
+        for key in [1, 'a']:
+            response = self.app.get('/types/%s/' % key)
+            self.assertEqual(response.status_code, 404, '%s - should return error 400' % key)
