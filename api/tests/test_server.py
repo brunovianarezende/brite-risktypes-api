@@ -47,6 +47,8 @@ _full_insurance = {
     ]
 }
 
+_JSON_CONTENT_TYPE = 'application/json; charset=utf-8'
+
 class TestServer(unittest.TestCase):
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
@@ -60,6 +62,7 @@ class TestServer(unittest.TestCase):
     def test_search_no_types(self):
         response = self.app.get('/search/types/')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['Content-type'], _JSON_CONTENT_TYPE)
         data = from_json(response)
         self.assertEqual(data, {
             'total': 0,
@@ -77,6 +80,7 @@ class TestServer(unittest.TestCase):
         expected.sort(key=lambda x: x['name'])
         response = self.app.get('/search/types/')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['Content-type'], _JSON_CONTENT_TYPE)
         data = from_json(response)
         self.assertEqual(data, {
             'total': 3,
@@ -90,6 +94,7 @@ class TestServer(unittest.TestCase):
 
         response = self.app.get('/types/%s/' % new_id)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['Content-type'], _JSON_CONTENT_TYPE)
         data = from_json(response)
         self.assertEqual(data, expected)
 
@@ -97,3 +102,4 @@ class TestServer(unittest.TestCase):
         for key in [1, 'a']:
             response = self.app.get('/types/%s/' % key)
             self.assertEqual(response.status_code, 404, '%s - should return error 400' % key)
+            self.assertEqual(response.headers['Content-type'], _JSON_CONTENT_TYPE)
