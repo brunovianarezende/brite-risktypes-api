@@ -1,4 +1,5 @@
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func, asc
 
 from brite.model import RiskType, AttributeDataType, AttributeTypeDate,\
     AttributeTypeEnum, AttributeTypeEnumValue, AttributeTypeInt, AttributeTypeNumeric,\
@@ -89,7 +90,10 @@ class DbService:
 
         return result
 
-    def get_types(self):
+    def get_types(self, order_by_name=False):
         session = self._Session()
-        risk_types = session.query(RiskType).all()
+        query = session.query(RiskType)
+        if order_by_name:
+            query = query.order_by(func.lower(RiskType.name))
+        risk_types = query.all()
         return [self._model_type2service_type(r) for r in risk_types]

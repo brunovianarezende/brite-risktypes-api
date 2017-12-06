@@ -102,3 +102,15 @@ class TestDbService(unittest.TestCase):
             for attr in result_type['attributes']:
                 attr.pop('id')
             assert result_type == insurance_type
+
+    def test_get_types_ordered(self):
+        def new_insurance(name):
+            insurance_type = deepcopy(full_insurance)
+            insurance_type['name'] = name
+            return insurance_type
+
+        self.db_service.add_type(new_insurance('c'))
+        self.db_service.add_type(new_insurance('B'))
+        self.db_service.add_type(new_insurance('a'))
+        result_types = self.db_service.get_types(order_by_name=True)
+        assert ['a', 'B', 'c'] == [r['name'] for r in result_types]
